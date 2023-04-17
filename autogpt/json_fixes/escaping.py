@@ -1,11 +1,15 @@
 """ Fix invalid escape sequences in JSON strings. """
 import json
-
+import re
 from autogpt.config import Config
 from autogpt.json_fixes.utilities import extract_char_position
 
 CFG = Config()
 
+def fix_unescaped_quotation_marks (json_to_load: str):
+    regex = r'([^{}\]\[,: "\n]+[ ]*)\"([ ]*[^{}\]\[,: "]+)\"'
+    json_to_load = (re.sub(regex,r"\1\"\2\"",txt))
+    return json_to_load
 
 def fix_invalid_escape(json_to_load: str, error_message: str) -> str:
     """Fix invalid escape sequences in JSON strings.
@@ -18,6 +22,7 @@ def fix_invalid_escape(json_to_load: str, error_message: str) -> str:
     Returns:
         str: The JSON string with invalid escape sequences fixed.
     """
+
     while error_message.startswith("Invalid \\escape"):
         bad_escape_location = extract_char_position(error_message)
         json_to_load = (

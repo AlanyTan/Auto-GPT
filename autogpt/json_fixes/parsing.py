@@ -10,6 +10,7 @@ from autogpt.config import Config
 from autogpt.json_fixes.auto_fix import fix_json
 from autogpt.json_fixes.bracket_termination import balance_braces
 from autogpt.json_fixes.escaping import fix_invalid_escape
+from autogpt.json_fixes.escaping import fix_unescaped_quotation_marks
 from autogpt.json_fixes.missing_quotes import add_quotes_to_property_names
 from autogpt.logs import logger
 from autogpt.speech import say_text
@@ -54,6 +55,8 @@ def correct_json(json_to_load: str) -> str:
         error_message = str(e)
         if error_message.startswith("Invalid \\escape"):
             json_to_load = fix_invalid_escape(json_to_load, error_message)
+        if error_message.startswith(r"Expecting ',' delimiter:"):
+            json_to_load = fix_unescaped_quotation_marks(json_to_load)
         if error_message.startswith(
             "Expecting property name enclosed in double quotes"
         ):
